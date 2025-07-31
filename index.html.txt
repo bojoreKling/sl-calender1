@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SLT Calendar Clock</title>
+<style>
+  body {
+    background-color: black;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    user-select: none;
+  }
+  #date {
+    font-size: 2.5em;
+    margin-bottom: 0.2em;
+  }
+  #time {
+    font-size: 3em;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+  <div id="date">Loading date...</div>
+  <div id="time">Loading time...</div>
+
+<script>
+// Function to get SLT time (SL is UTC-7)
+function getSLTDate() {
+  let now = new Date();
+
+  // Convert now to UTC time, then subtract 7 hours for SLT
+  let utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  let sltDate = new Date(utc - (7 * 3600000));
+
+  return sltDate;
+}
+
+function formatDate(date) {
+  const weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  
+  let dayName = weekdays[date.getUTCDay()];
+  let monthName = months[date.getUTCMonth()];
+  let dayNum = date.getUTCDate();
+
+  return `${dayName}, ${monthName} ${dayNum}`;
+}
+
+function formatTime(date) {
+  let hours = date.getUTCHours();
+  let minutes = date.getUTCMinutes();
+
+  let ampm = "AM";
+  if (hours >= 12) {
+    ampm = "PM";
+    if (hours > 12) hours -= 12;
+  } else if (hours === 0) {
+    hours = 12;
+  }
+
+  let minuteStr = minutes < 10 ? "0" + minutes : minutes;
+  let hourStr = hours < 10 ? "0" + hours : hours;
+
+  return `${hourStr}:${minuteStr} ${ampm} SLT`;
+}
+
+function update() {
+  const slt = getSLTDate();
+  document.getElementById("date").textContent = formatDate(slt);
+  document.getElementById("time").textContent = formatTime(slt);
+}
+
+// Update every second
+setInterval(update, 1000);
+update(); // initial call
+</script>
+</body>
+</html>
